@@ -188,11 +188,20 @@ function cellTd(cell, extraClass = "") {
   const cls = [cell.r, extraClass].filter(Boolean).join(" ");
   return `<td${cls ? ` class="${cls}"` : ""}>${fmt(cell.v)}</td>`;
 }
+// Build a <colgroup>: first `nHead` columns get `headW`, the remaining `nData` share the rest.
+function colgroup(nHead, headW, nData) {
+  let cg = "<colgroup>";
+  for (let i = 0; i < nHead; i++) cg += `<col style="width:${headW}" />`;
+  const w = `${(100 - parseFloat(headW) * nHead) / nData}%`;
+  for (let i = 0; i < nData; i++) cg += `<col style="width:${w}" />`;
+  return cg + "</colgroup>";
+}
 
 // Wide method table: each method has `sub` sub-columns (e.g. RRA/RTA), and rows
 // are scenes. `oursFrom` marks the first "ours" method index for a divider.
 function renderMethodTable(methods, venues, subHeaders, rows, avgRow, oursFrom) {
   const sub = subHeaders.length;
+  const cg = colgroup(1, "7%", methods.length * sub);
   let head = '<thead><tr><th class="row-head">Scene</th>';
   methods.forEach((m, i) => {
     const ours = i >= oursFrom ? " ours" : "";
@@ -228,11 +237,12 @@ function renderMethodTable(methods, venues, subHeaders, rows, avgRow, oursFrom) 
   if (avgRow) body += bodyRow(avgRow, true);
   body += "</tbody>";
 
-  return `<div class="table-scroll"><table class="data">${head}${body}</table></div>`;
+  return `<div class="table-scroll"><table class="data">${cg}${head}${body}</table></div>`;
 }
 
 // Metric-as-rows table (IMC, T&T): methods are columns, metrics are rows.
 function renderMetricTable(methods, venues, rows, oursFrom) {
+  const cg = colgroup(1, "12%", methods.length);
   let head = '<thead><tr><th class="row-head">Metric</th>';
   methods.forEach((m, i) => {
     head += `<th class="${i >= oursFrom ? "ours" : ""}">${m}</th>`;
@@ -252,12 +262,13 @@ function renderMetricTable(methods, venues, rows, oursFrom) {
     body += `<tr>${tds}</tr>`;
   });
   body += "</tbody>";
-  return `<div class="table-scroll"><table class="data">${head}${body}</table></div>`;
+  return `<div class="table-scroll"><table class="data">${cg}${head}${body}</table></div>`;
 }
 
 // FastMap grouped table: 3 metric groups x 6 methods, rows = scenes.
 function renderFastMap(methods, groups, rows) {
   const nm = methods.length;
+  const cg = colgroup(2, "9%", nm * groups.length);
   let head = '<thead><tr><th class="row-head" rowspan="2">Scene</th><th class="row-head" rowspan="2">#imgs</th>';
   groups.forEach((g) => (head += `<th colspan="${nm}" class="group-head">${g}</th>`));
   head += '</tr><tr>';
@@ -281,7 +292,7 @@ function renderFastMap(methods, groups, rows) {
     body += `<tr>${tds}</tr>`;
   });
   body += "</tbody>";
-  return `<div class="table-scroll"><table class="data">${head}${body}</table></div>`;
+  return `<div class="table-scroll"><table class="data">${cg}${head}${body}</table></div>`;
 }
 
 function block(id, title, caption, html) {
