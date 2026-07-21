@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>On Self-Improving Feed-Forward Structure-from-Motion</title>
+  <meta name="description" content="A self-improving feed-forward Structure-from-Motion pipeline: a generalizable multi-view pose estimator that refines its own predictions with bundle adjustment and fine-tunes on self-generated supervision." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="hero">
+    <div class="container">
+      <p class="venue">Preprint &middot; Under Review</p>
+      <h1 class="title">On Self-Improving Feed-Forward Structure-from-Motion:<br /><span class="subtitle">A Generalizable Multi-View Pose Estimator</span></h1>
+
+      <div class="authors">
+        <span class="author">Anonymous Authors</span>
+      </div>
+      <div class="affiliations">
+        <span>Anonymous Affiliation</span>
+      </div>
+
+      <nav class="links" aria-label="Resource links">
+        <a class="btn" href="#abstract"><span class="btn-ico">&#9782;</span> Abstract</a>
+        <a class="btn" href="#video"><span class="btn-ico">&#9654;</span> Video</a>
+        <a class="btn" href="#results"><span class="btn-ico">&#9636;</span> Results</a>
+        <a class="btn btn-disabled" aria-disabled="true"><span class="btn-ico">&#128196;</span> Paper (soon)</a>
+        <a class="btn btn-disabled" aria-disabled="true"><span class="btn-ico">&#128187;</span> Code (soon)</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- Abstract -->
+    <section id="abstract" class="section">
+      <div class="container narrow">
+        <h2>Abstract</h2>
+        <p>
+          Classical Structure-from-Motion (SfM) is an optimization method: it jointly recovers camera
+          poses, verified image correspondences, and depth (i.e., a point cloud) from an image collection
+          without labels. Modern feed-forward SfM models instead regress these quantities in a single pass.
+          But they must first be trained on labeled data, part of which is itself produced by classical SfM
+          pipelines. Being learning-based models, they fail to generalize at inputs beyond the training
+          distribution.
+        </p>
+        <p>
+          We hence aim to close this generalization gap between feed-forward and classical SfM, by making
+          feed-forward SfM produce its own labels: an optional bundle adjustment (BA) stage refines its
+          predictions, and the refined output fine-tunes the network, forming a <em>self-improving</em> loop.
+          This work focuses on a self-improving pipeline for camera intrinsic and extrinsic estimation.
+          Specifically, we formulate SfM as three foundation models: a frozen depth and correspondence
+          estimator, and a tunable feed-forward pose estimator (the <em>SfM pose estimator</em>).
+        </p>
+        <p>
+          We propose a global BA that depends entirely on model outputs: initialized with the feed-forward
+          camera estimates, it optimizes for projective consistency between the predicted depth and
+          correspondence maps. It then extracts a subset of accurately registered images, whose refined poses
+          serve as pseudo ground truth to fine-tune the SfM pose estimator. The resulting pipeline scales
+          end-to-end: from feed-forward initialization to BA, and from small scenes to large-scale
+          (&sim;15,000-image) unconstrained internet-collected image sets. By continually re-training on this
+          self-generated supervision, the SfM pose estimator adapts to the new domain.
+        </p>
+        <p>
+          We validate our proposal with competitive or state-of-the-art pose accuracy across small-scene
+          (IMC2021, ETH3D) and large-scene (FastMap, T&amp;T) benchmarks, and demonstrate scalable
+          reconstruction on unconstrained internet collections (GLDv2, 1DSfM). Together, these results point to
+          an emerging self-improving learning paradigm for SfM that generalizes across arbitrary domains.
+        </p>
+      </div>
+    </section>
+
+    <!-- Video montages -->
+    <section id="video" class="section section-alt">
+      <div class="container">
+        <h2>Reconstruction Montages</h2>
+        <p class="section-lead">
+          Orbit renderings of reconstructions produced by our pipeline across benchmark scenes.
+        </p>
+        <div class="video-grid">
+          <figure class="video-card">
+            <video controls playsinline muted loop preload="metadata" poster="">
+              <source src="assets/videos/1dsfm_montage.mp4" type="video/mp4" />
+            </video>
+            <figcaption><strong>1DSfM</strong> &mdash; unconstrained internet photo collections</figcaption>
+          </figure>
+          <figure class="video-card">
+            <video controls playsinline muted loop preload="metadata" poster="">
+              <source src="assets/videos/tnt_montage.mp4" type="video/mp4" />
+            </video>
+            <figcaption><strong>Tanks &amp; Temples</strong> &mdash; large-scale ordered captures</figcaption>
+          </figure>
+          <figure class="video-card pending" id="eth3d-video-card">
+            <div class="video-placeholder">ETH3D montage &mdash; compressed video coming soon</div>
+            <video controls playsinline muted loop preload="metadata" poster="">
+              <source src="assets/videos/eth3d_montage.mp4" type="video/mp4" />
+            </video>
+            <figcaption><strong>ETH3D</strong> &mdash; calibrated indoor/outdoor scenes</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- Results / tables -->
+    <section id="results" class="section">
+      <div class="container">
+        <h2>Benchmark Results</h2>
+        <p class="section-lead">
+          &#9737; / &#8224; denote our model without / with target-domain self-supervised fine-tuning;
+          <em>Ours&#9737;+BA</em> denotes the &#9737; model with bundle adjustment applied at test time.
+          <span class="legend-chip chip-1">1st</span>
+          <span class="legend-chip chip-2">2nd</span>
+          <span class="legend-chip chip-3">3rd</span>
+        </p>
+
+        <div id="tables"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>Project page for &ldquo;On Self-Improving Feed-Forward Structure-from-Motion.&rdquo; Anonymous submission.</p>
+    </div>
+  </footer>
+
+  <script src="tables.js"></script>
+</body>
+</html>
