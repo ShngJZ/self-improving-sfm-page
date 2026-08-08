@@ -10,6 +10,10 @@
   --rank2: #E5FFE5;
   --rank3: #FFFFCC;
   --fail: #f4cccc;
+  --na: #c0c0c0;
+  /* Method-category hues, matching the paper's figFF / figBA palette. */
+  --cat-reg: #2A9D8F;
+  --cat-opt: #E76F51;
   --serif: "Newsreader", Georgia, "Times New Roman", serif;
   --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   --maxw: 1120px;
@@ -230,6 +234,23 @@ table.data .ours { border-left: 1px solid #b9c1c9; }
 .r2 { background: var(--rank2) !important; }
 .r3 { background: var(--rank3) !important; }
 .fail { background: var(--fail) !important; color: #a11; }
+.na { background: var(--na) !important; color: #333; }
+
+/* Method-category underline, mirroring the paper's \catOpt / \catReg tags:
+   coral for methods with test-time optimization, teal for pure feed-forward.
+   Drawn as a text decoration rather than a border so a name that wraps
+   (e.g. "VGGT-SLAM") is underlined on every line. */
+.cat {
+  text-decoration-line: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  /* Method names may wrap at hyphens (MASt3R-SfM) but must never break inside a
+     word, which would split suffixes like "+BA" across lines. */
+  word-break: normal;
+  overflow-wrap: normal;
+}
+.cat-opt { text-decoration-color: var(--cat-opt); }
+.cat-reg { text-decoration-color: var(--cat-reg); }
 
 table.data th.venue-cell {
   font-weight: 400;
@@ -251,13 +272,23 @@ table.data th.group-head {
 }
 table.data .ours, table.data th.ours, table.data td.ours { border-left: 1px solid #b9c1c9; }
 table.data .grp-div { border-left: 1px solid #aab2ba; }
-table.data th.ours-sub { color: var(--accent); }
+/* Threshold-block divider in the ETH3D table (the paper's "!{\vrule}"). */
+table.data .blk-div { border-left: 1.2px solid var(--ink); }
+/* Ground-truth-source rule in the FastMap table: splits below this row do not
+   use a COLMAP reconstruction as ground truth. */
+table.data tbody tr.split-row td { border-top: 1px solid var(--ink); }
+table.data th.ours-sub .cat { font-weight: 700; }
 
-/* Widest tables (ETH3D per-scene, FastMap) get a smaller font to avoid scroll */
-#tab-eth3d table.data { font-size: 0.62rem; }
-#tab-eth3d table.data th.subh { font-size: 0.58rem; }
-#tab-eth3d table.data th.venue-cell { font-size: 0.54rem; }
-#tab-eth3d table.data th, #tab-eth3d table.data td { padding: 3px 1px; }
+/* Widest tables (ETH3D per-scene, IMC2021, FastMap) get a smaller font so no
+   header is clipped and no table needs horizontal scrolling. */
+#tab-eth3d table.data { font-size: 0.54rem; }
+#tab-eth3d table.data th.subh { font-size: 0.5rem; }
+#tab-eth3d table.data th.venue-cell { font-size: 0.46rem; }
+#tab-eth3d table.data th, #tab-eth3d table.data td { padding: 3px 0; }
+/* 18 method columns: the widest name ("MASt3R-SfM") only fits at this size. */
+#tab-imc table.data { font-size: 0.68rem; }
+#tab-imc table.data th.venue-cell { font-size: 0.6rem; }
+#tab-imc table.data th, #tab-imc table.data td { padding: 4px 1px; }
 #tab-fastmap table.data { font-size: 0.66rem; }
 #tab-fastmap table.data th.subh { font-size: 0.6rem; }
 #tab-fastmap table.data th, #tab-fastmap table.data td { padding: 3px 1px; }
@@ -273,6 +304,15 @@ table.data th.ours-sub { color: var(--accent); }
 .chip-1 { background: var(--rank1); }
 .chip-2 { background: var(--rank2); }
 .chip-3 { background: var(--rank3); }
+.chip-fail { background: var(--fail); color: #a11; }
+.chip-na { background: var(--na); color: #333; }
+
+/* Legend for the method-category underlines, matching the paper's caption key. */
+.legend-cat {
+  font-weight: 600;
+  white-space: nowrap;
+  margin: 0 2px;
+}
 
 /* Footer */
 .footer {

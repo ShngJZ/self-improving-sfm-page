@@ -40,24 +40,22 @@
           poses, verified image correspondences, and depth (i.e., a point cloud) from an image collection
           without labels. Modern feed-forward SfM models instead regress these quantities in a single pass.
           But they must first be trained on labeled data, part of which is itself produced by classical SfM
-          pipelines. Being learning-based models, they fail to generalize at inputs beyond the training
-          distribution. We hence aim to close this generalization gap between feed-forward and classical SfM,
-          by making feed-forward SfM produce its own labels: an optional bundle adjustment (BA) stage refines
-          its predictions, and the refined output fine-tunes the network, forming a <em>self-improving</em>
-          loop. This work focuses on a self-improving pipeline for camera intrinsic and extrinsic estimation.
-          Specifically, we formulate SfM as three foundation models: a frozen depth and correspondence
-          estimator, and a tunable feed-forward pose estimator (the <em>SfM pose estimator</em>). We propose a
-          global BA that depends entirely on model outputs: initialized with the feed-forward camera estimates,
-          it optimizes for projective consistency between the predicted depth and correspondence maps. It then
-          extracts a subset of accurately registered images, whose refined poses serve as pseudo ground truth
-          to fine-tune the SfM pose estimator. The resulting pipeline scales end-to-end: from feed-forward
-          initialization to BA, and from small scenes to large-scale (&sim;15,000-image) unconstrained
-          internet-collected image sets. By continually re-training on this self-generated supervision, the SfM
-          pose estimator adapts to the new domain. We validate our proposal with competitive or
-          state-of-the-art pose accuracy across small-scene (IMC2021, ETH3D) and large-scene (FastMap, T&amp;T)
-          benchmarks, and demonstrate scalable reconstruction on unconstrained internet collections (GLDv2,
-          1DSfM). Together, these results point to an emerging self-improving learning paradigm for SfM that
-          generalizes across arbitrary domains.
+          pipelines. Like other learned models, they fail on inputs beyond the training distribution.
+          We close this gap by making feed-forward SfM produce its own labels: an optional bundle
+          adjustment (BA) stage refines its predictions, and the refined output fine-tunes the network,
+          forming a <em>self-improving</em> loop. We realize this loop for camera intrinsic and extrinsic
+          estimation, formulating SfM as three foundation models: a frozen depth and correspondence
+          estimator, and a tunable feed-forward pose estimator (the <em>SfM pose estimator</em>). We propose
+          a global BA that depends entirely on model outputs: initialized with the feed-forward camera
+          estimates, it optimizes for projective consistency between the predicted depth and correspondence
+          maps, then extracts a subset of accurately registered images whose refined poses serve as pseudo
+          ground truth. The pipeline scales end-to-end: from feed-forward initialization to BA, and from
+          small scenes to &sim;15,000-image unconstrained internet collections. Continual retraining on this
+          self-generated supervision adapts the SfM pose estimator to the new domain. Pseudo-labeled
+          fine-tuning yields a strong feed-forward pose estimator on small-scene (IMC2021, ETH3D) and
+          large-scene (FastMap, T&amp;T) benchmarks, our BA-refined poses approach ground-truth quality, and
+          the pipeline scales to unconstrained internet collections (GLDv2, 1DSfM). These results point to
+          an emerging self-improving learning paradigm for SfM that generalizes across arbitrary domains.
         </p>
       </div>
     </section>
@@ -67,8 +65,9 @@
       <div class="container">
         <h2>Reconstruction Montages</h2>
         <p class="section-lead">
-          Orbit renderings of reconstructions produced by our pipeline across benchmark scenes.
+          Recovered point clouds and camera frusta (red) from our self-improving SfM.
         </p>
+
         <div class="video-grid">
           <figure class="video-card">
             <video controls playsinline muted loop autoplay preload="metadata" poster="">
@@ -94,6 +93,12 @@
             </video>
             <figcaption><strong>IMC PhotoTourism</strong></figcaption>
           </figure>
+          <figure class="video-card">
+            <video controls playsinline muted loop autoplay preload="metadata" poster="">
+              <source src="assets/videos/fastmap_montage.mp4" type="video/mp4" />
+            </video>
+            <figcaption><strong>FastMap</strong></figcaption>
+          </figure>
         </div>
       </div>
     </section>
@@ -105,9 +110,13 @@
         <p class="section-lead">
           &#9737; / &#8224; denote our model without / with target-domain self-supervised fine-tuning;
           <em>Ours&#9737;+BA</em> denotes the &#9737; model with bundle adjustment applied at test time.
+          <br />
           <span class="legend-chip chip-1">1st</span>
           <span class="legend-chip chip-2">2nd</span>
           <span class="legend-chip chip-3">3rd</span>
+          per metric &middot;
+          <span class="legend-cat"><span class="cat cat-opt">with optimization</span></span> /
+          <span class="legend-cat"><span class="cat cat-reg">feed-forward only</span></span>
         </p>
 
         <div id="tables"></div>
