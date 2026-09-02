@@ -4,7 +4,7 @@
 //
 // Each method is [name, venue, category] with category "opt" (test-time
 // optimization) or "reg" (pure feed-forward), matching the paper's
-// \catOpt / \catReg underlines. Each cell is [value] or [value, rankClass]
+// \catOpt / \catReg marks. Each cell is [value] or [value, rankClass]
 // with rankClass in {r1, r2, r3, fail, na}.
 
 /* ================= Table 1: ETH3D (per-scene RRA / RTA) ================= */

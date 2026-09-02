@@ -1,2 +1,6 @@
 .DS_Store
 *.log
+
+# Montage GIFs are intermediates from the video build; the site embeds the .mp4
+# versions only (see index.html), so the ~69 MB of GIFs stay out of the repo.
+assets/videos/*.gif
